@@ -1,11 +1,11 @@
 <template>
 
-  <b-navbar toggleable="md" type="dark" variant="info"  class="navbar navbar-expand-lg navbar-dark bg-dark" v-if="isLogged">
+  <b-navbar toggleable="md" type="dark" variant="info"  class="navbar navbar-expand-lg mb-3" v-if="isLogged">
 
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
     <b-navbar-brand href="#">
-      <router-link to="/" class="navbar-brand">Vue Show</router-link>
+      <router-link to="/" class="navbar-brand"><img src="./../../assets/logo.png"  width="100px"/>  </router-link>
     </b-navbar-brand>
 
     <b-navbar-nav id="myBredcrumb">
@@ -59,9 +59,9 @@
       <b-navbar-nav class="ml-auto ">
         <b-nav-item id="profileDropdown">
           <b-nav-item-dropdown class="nav-item" :text="decoded.name || decoded.login" right>
-            <b-dropdown-item href="#">
-              <router-link :to="{ name: 'UsersForm', params:{ id: decoded._id } }" class="nav-link dropdown-nav-link">My profile</router-link>
-            </b-dropdown-item>
+            <!-- <b-dropdown-item href="#">
+              <router-link :to="{ name: 'UsersForm', params:{ id: decoded._id } }" class="nav-link dropdown-nav-link">Meus dados</router-link>
+            </b-dropdown-item> -->
 
             <b-dropdown-item href="#" @click="logout()">
               <div class="nav-link dropdown-nav-link">
@@ -73,24 +73,6 @@
         </b-nav-item>
       </b-navbar-nav>
 
-      <b-navbar-nav>
-        <b-nav-item class="nomargin">
-          <router-link :to="{ name: 'UsersForm', params:{ id: decoded._id } }" class="navbar-brand nomargin">
-            <img
-              rounded="circle"
-              blank
-              width="55"
-              style=""
-              height="55"
-              blank-color="#777"
-              alt="My profile"
-              title="My profile"
-              class="m-1 nomargin rounded-circle img"
-              :src="getFile()"
-            >
-          </router-link>
-        </b-nav-item>
-      </b-navbar-nav>
 
     </b-collapse>
   </b-navbar>
@@ -115,20 +97,6 @@ export default {
     logout() {
       this.$store.commit('user_logout');
     },
-    getFile() {
-      if (this.decoded) {
-        let file = `${this.api}/api/v1/upload?`;
-        file += `token=${this.token}`;
-        file += `&mimetype=${this.decoded.avatar.mimetype}`;
-        file += `&filename=${this.decoded.avatar.filename}`;
-        file += `&folder=${this.decoded.avatar.folder}`;
-
-        console.log(file);
-        return file;
-      } else {
-        return '';
-      }
-    }
   },
   computed: {
     isLogged() {
@@ -150,6 +118,7 @@ export default {
 </script>
 
 <style scoped>
+
 #myBredcrumb{
   position: absolute;
   top: 50px;
@@ -158,7 +127,7 @@ export default {
 #myBredcrumb span {
   font-weight: 100;
   font-size: 11px;
-  color: #777
+  color: #fff
 }
 .collapse{
   width: 100%
@@ -177,10 +146,12 @@ export default {
 #profileDropdown{
   margin-right: 0px;
   padding-right: 0px;
+  color: black !important
 }
 
 #profileDropdown .nav-item {
   margin: 0px;
 }
+
 
 </style>

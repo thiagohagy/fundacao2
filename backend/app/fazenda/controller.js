@@ -28,8 +28,8 @@ exports.get = async (req, res) => {
 };
 
 exports.new = async (req, res) => {
-  req.body.createdBy = req.decoded._id;
-  var model = new Model(req.body);
+  const model = new Model(req.body);
+  model.produtor = req.decoded._id;
   const [err, data] = await to(model.save());
 
   if (!err && data) {
@@ -54,6 +54,9 @@ exports.edit = async (req, res) => {
   const model = await Model.findOne({ _id: req.body._id });
 
   model.name = req.body.name;
+  model.talhoes = req.body.talhoes;
+  model.area = req.body.area;
+  
   const [err, data] = await to(model.save());
 
   if (!err && data) {

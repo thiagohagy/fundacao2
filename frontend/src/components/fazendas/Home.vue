@@ -2,7 +2,7 @@
   <div class="container text-left" >
 
     <my-crud-header
-      addRoute='UsersForm'
+      addRoute='FazendaForm'
       @onDelete='deleteSelected'
       @onSearch='search = $event.search; listAll()'
     >
@@ -21,10 +21,7 @@
                   >
                   </b-form-checkbox>
                   </th>
-                <th scope="col">Client</th>
-                <th scope="col">Login</th>
-                <th scope="col">Email</th>
-                <th scope="col">Role</th>
+                <th scope="col">Name</th>
                 <th scope="col">Option</th>
               </tr>
             </thead>
@@ -36,20 +33,13 @@
                   >
                   </b-form-checkbox>
                 </td>
+                <td>{{item.name}}</td>
                 <td>
-                  <span v-if="item.client">
-                    {{item.client.name}}
-                  </span>
-                </td>
-                <td>{{item.login}}</td>
-                <td>{{item.email}}</td>
-                <td>{{item.role}}</td>
-                <td>
-                  <b-button variant="outline-secondary btn-sm">
-                    <router-link :to="{name: 'UsersForm', params: {id: item._id }}">
-                      Edit
-                    </router-link>
-                  </b-button>
+                  <router-link :to="{name: 'FazendaForm', params: {id: item._id }}">
+                    <b-button variant="outline-secondary btn-sm">
+                        Editar
+                    </b-button>
+                  </router-link>
                 </td>
               </tr>
             </tbody>
@@ -61,9 +51,7 @@
         :total='totalItens'
         @pageChanged='listAll($event.skip,$event.limit)'
       ></my-pagination>
-
     </div>
-
   </div>
 </template>
 
@@ -82,7 +70,7 @@
     },
     methods: {
       async listAll(skip = 0,limit = 5){ // default values
-        let resposta = await this.$http.post('/v1/users/list', { skip, limit, busca: this.search});
+        let resposta = await this.$http.post('/v1/fazendas/list', { skip, limit, busca: this.search});
         this.totalItens = resposta.total;
         this.list = resposta.data;
       },
@@ -96,7 +84,7 @@
         for (let i = 0; i < this.list.length; i++) {
           const el = this.list[i];
           if (el.selected) {
-            await this.$http.delete(`/v1/users/${el._id}`);
+            await this.$http.delete(`/v1/fazendas/${el._id}`);
           }
         }
         this.listAll();

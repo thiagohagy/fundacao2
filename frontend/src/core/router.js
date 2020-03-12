@@ -18,12 +18,6 @@ const Login = (resolve) => {
   });
 };
 
-// USERS
-const Users = (resolve) => {
-  require.ensure(['./../components/users/Home.vue'], () => {
-    resolve(require('././../components/users/Home.vue'));
-  });
-};
 
 const UsersForm = (resolve) => {
   require.ensure(['./../components/users/Form.vue'], () => {
@@ -31,16 +25,17 @@ const UsersForm = (resolve) => {
   });
 };
 
+
 // CLIENTS
-const Clients = (resolve) => {
-  require.ensure(['./../components/client/Home.vue'], () => {
-    resolve(require('././../components/client/Home.vue'));
+const Fazenda = (resolve) => {
+  require.ensure(['./../components/fazendas/Home.vue'], () => {
+    resolve(require('././../components/fazendas/Home.vue'));
   });
 };
 
-const ClientsForm = (resolve) => {
-  require.ensure(['./../components/client/Form.vue'], () => {
-    resolve(require('././../components/client/Form.vue'));
+const FazendaForm = (resolve) => {
+  require.ensure(['./../components/fazendas/Form.vue'], () => {
+    resolve(require('././../components/fazendas/Form.vue'));
   });
 };
 
@@ -56,11 +51,11 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
+      name: 'Início',
       component: Home,
       meta: {
-        humanName: 'Home',
-        pathAlias: 'Home',
+        humanName: 'Início',
+        pathAlias: 'Início',
         showOnNav: true,
       },
     },
@@ -80,60 +75,44 @@ const router = new Router({
       },
       meta: {
         humanName: 'Users',
-        showOnNav: true,
+        showOnNav: false,
       },
       children: [
         {
-          path: '',
-          name: 'Users',
-          component: Users,
-          meta: {
-            humanName: 'List',
-            pathAlias: 'Users / List',
-            showOnNav: true,
-          },
-        },
-        {
           path: 'form/:id?',
-          props: true, // pass paramas as props, then you dont need to use $watch
+          // props: true, // pass paramas as props, then you dont need to use $watch
           name: 'UsersForm',
-          component: UsersForm,
-          meta: {
-            humanName: 'Form',
-            pathAlias: 'Users / Form',
-            showOnNav: true,
-          },
         },
       ],
     },
     {
-      path: '/clients',
+      path: '/fazenda',
       component: {
         render(c) { return c('router-view') } /// then I dont need a parent component file
       },
       meta: {
-        humanName: 'Clients',
+        humanName: 'Fazendas',
         showOnNav: true,
       },
       children: [
         {
           path: '',
-          name: 'Clients',
-          component: Clients,
+          name: 'Fazendas',
+          component: Fazenda,
           meta: {
-            humanName: 'List',
-            pathAlias: 'Clients / List',
+            humanName: 'Listagem',
+            pathAlias: 'Fazendas / Listagem',
             showOnNav: true,
           },
         },
         {
           path: 'form/:id?',
           props: true, // pass paramas as props, then you dont need to use $watch
-          name: 'ClientsForm',
-          component: ClientsForm,
+          name: 'FazendaForm',
+          component: FazendaForm,
           meta: {
-            humanName: 'Form',
-            pathAlias: 'Clients / Form',
+            humanName: 'Formulário',
+            pathAlias: 'Fazendas / Formulário',
             showOnNav: true,
           },
         },

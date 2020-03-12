@@ -6,28 +6,12 @@ const Schema = mongoose.Schema({
     type: String,
     index: { unique: true, dropDups: true }
   },
-  createdBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Usuario'
-  },
-  lastUpdateBy: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Usuario'
-  },
-  client: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'Client'
-  },
+  saldo: Number,
+  cpfcnpj: String,
   password: String,
   name: String,
-  role: String,
   email: String,
   active: { type: Boolean, default: true },
-  avatar : {
-    filename: { type: String, default: '' },
-    mimetype: { type: String, default: '' },
-    folder: { type: String, default: '' },
-  }
 });
 
 Schema.pre('save', function(next) {
@@ -46,4 +30,4 @@ Schema.pre('save', function(next) {
   });
 });
 
-module.exports = mongoose.model('Usuario', Schema);
+module.exports = mongoose.model('Produtor', Schema);

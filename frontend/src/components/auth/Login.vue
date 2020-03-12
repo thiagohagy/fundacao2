@@ -1,8 +1,8 @@
 <template>
   <form class="form-signin" v-on:submit.prevent="logar">
-    <h2 class="form-signin-heading">Login</h2>
+    <h2 class="form-signin-heading"><img class="col" src='./../../assets/logo.png'></h2>
     <input v-model="form.login" type="text" class="form-control" placeholder="Login" required autofocus>
-    <input v-model="form.password" type="password" class="form-control" placeholder="Password" required>
+    <input v-model="form.password" type="password" class="form-control" placeholder="Senha" required>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
 
     <my-alert

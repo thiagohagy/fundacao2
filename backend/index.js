@@ -25,12 +25,9 @@ mongoose.connect(
     useMongoClient: true
   }
 );
-/*Seed - rota para cadastrar o admin no banco*/
-app.use('/api/fixture', require('./app/usuario/fixture'));
-
 
 /*Login de Usuarios*/
-app.use('/api/', require('./app/usuario/auth'));
+app.use('/api/', require('./app/produtor/auth'));
 
 /*Mid para rotas da API verificar JWT*/
 var jwt = require('./core/jwt');
@@ -40,8 +37,9 @@ app.use('/api/v1', jwt);
 /* universal route for uploads*/
 jwt.use('/upload', require('./app/upload'));
 
-jwt.use('/users', require('./app/usuario'));
-jwt.use('/clients', require('./app/client'));
+jwt.use('/produtores', require('./app/produtor'));
+jwt.use('/fazendas', require('./app/fazenda'));
+jwt.use('/operacoes', require('./app/operacao'));
 
 var id = Number(process.env.id);
 var hit = 0;

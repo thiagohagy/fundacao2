@@ -25,12 +25,17 @@ import './assets/custom.css';
 
 import './core/globalMixin';
 import './core/filter';
-import './core/mask';
+
+
 
 library.add(fas);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead)
+
+import VModal from 'vue-js-modal'
+
+Vue.use(VModal, { dynamic: true , injectModalsContainer: true });
 
 Vue.use(BootstrapVue);
 
@@ -50,6 +55,20 @@ Vue.use(Toasted, {
     after: true, // this will append the icon to the end of content
   },
 });
+
+import VueTheMask from 'vue-the-mask'
+Vue.use(VueTheMask)
+
+import money from 'v-money';
+
+Vue.use(money, {
+  decimal: ',',
+  thousands: '.',
+  prefix: 'R$ ',
+  suffix: ' #',
+  precision: 2,
+  masked: false,
+})
 
 Vue.use(VueProgressBar, {
   color: 'blue',
