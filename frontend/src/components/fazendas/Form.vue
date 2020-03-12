@@ -54,7 +54,7 @@
           name: 'teste',
           talhoes: [{}],
         },
-        pageTitle: 'Client registration',
+        pageTitle: 'Cadastro de fazenda',
       }
     },
     methods: {

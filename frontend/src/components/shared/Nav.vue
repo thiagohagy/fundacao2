@@ -59,9 +59,9 @@
       <b-navbar-nav class="ml-auto ">
         <b-nav-item id="profileDropdown">
           <b-nav-item-dropdown class="nav-item" :text="decoded.name || decoded.login" right>
-            <!-- <b-dropdown-item href="#">
+            <b-dropdown-item href="#">
               <router-link :to="{ name: 'UsersForm', params:{ id: decoded._id } }" class="nav-link dropdown-nav-link">Meus dados</router-link>
-            </b-dropdown-item> -->
+            </b-dropdown-item>
 
             <b-dropdown-item href="#" @click="logout()">
               <div class="nav-link dropdown-nav-link">

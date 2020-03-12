@@ -75,12 +75,10 @@ const router = new Router({
       },
       meta: {
         humanName: 'Users',
-        showOnNav: false,
       },
       children: [
         {
           path: 'form/:id?',
-          // props: true, // pass paramas as props, then you dont need to use $watch
           name: 'UsersForm',
         },
       ],

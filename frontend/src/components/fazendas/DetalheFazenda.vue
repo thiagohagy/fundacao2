@@ -13,10 +13,10 @@
 
               <label class="mt-3">Talhoes (hectares): </label>
               <table class="table">
-                <thead>
+                <thead class="table-dark">
                   <tr>
                     <th>Nome</th>
-                    <th>Custo</th>
+                    <th>Custo atual</th>
                   </tr>
                 </thead>
                 <tbody>
