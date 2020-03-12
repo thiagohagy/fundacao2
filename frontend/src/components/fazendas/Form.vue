@@ -17,8 +17,6 @@
             <b-form-input id="name" type="number" v-model="form.area"  placeholder="Área em hectares"></b-form-input>
           </b-form-group>
           
-          
-          
           <b-form-group id="nameLabel" label="Talhões:" label-for="name" >
             <b-form-input v-for="(talhao, key) in form.talhoes" :key="key" id="name" type="text" v-model="talhao.nome"  placeholder="Nome do talhão"></b-form-input>
           </b-form-group>
@@ -47,7 +45,6 @@
 
 
   export default {
-    props:['id'],
     data() {
       return {
         form:{

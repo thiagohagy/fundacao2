@@ -43,6 +43,8 @@
           <b-alert show variant="info" v-if="form._id">Deixe em branco para manter a mesma</b-alert>
         </div>
 
+        
+
       </div>
 
       <div class="row">
@@ -112,59 +114,58 @@ export default {
       ),
     };
   },
-  // methods: {
-  //   setAvatarData(file, response) {
-  //     this.form.avatar = {};
-  //     this.form.avatar.filename = response.file.filename;
-  //     this.form.avatar.mimetype = response.file.mimetype;
-  //     this.form.avatar.folder = response.file.destinationFolder;
-  //   },
-  //   getExtraUploadData(file, xhr, formData) {
-  //     formData.append('folder', 'avatar'); // add field to upload form
-  //   },
-  //   async onSubmit() {
-  //     if (this.form._id) {
-  //       if (this.form.email && this.form.login) {
-  //         const response = await this.$http.put('v1/users', this.form); // request with async await
+  methods: {
+    setAvatarData(file, response) {
+      this.form.avatar = {};
+      this.form.avatar.filename = response.file.filename;
+      this.form.avatar.mimetype = response.file.mimetype;
+      this.form.avatar.folder = response.file.destinationFolder;
+    },
+    getExtraUploadData(file, xhr, formData) {
+      formData.append('folder', 'avatar'); // add field to upload form
+    },
+    async onSubmit() {
+      if (this.form._id) {
+        if (this.form.email && this.form.login) {
+          const response = await this.$http.put('v1/produtores', this.form); // request with async await
 
-  //         if (response.success) {
-  //           this.$toasted.show('User edited with success', { icon: 'check', type: 'success' });
-  //         } else {
-  //           this.$toasted.show(response.err, { icon: 'times', type: 'error' });
-  //         }
-  //       } else {
-  //         this.$toasted.show('Inform  email, role, client, login and password. Password and passord confirm must be equals', { icon: 'times', type: 'error' });
-  //       }
-  //     } else if (
-  //       this.form.client &&
-  //       this.form.email &&
-  //       this.form.login &&
-  //       (this.form.password && this.form.password === this.form.passwordC)
-  //     ) {
-  //       const response = await this.$http.post('v1/produtores', this.form); // request with async await
+          if (response.success) {
+            this.$toasted.show('User edited with success', { icon: 'check', type: 'success' });
+          } else {
+            this.$toasted.show(response.err, { icon: 'times', type: 'error' });
+          }
+        } else {
+          this.$toasted.show('Inform  email, role, client, login and password. Password and passord confirm must be equals', { icon: 'times', type: 'error' });
+        }
+      } else if (
+        this.form.client &&
+        this.form.email &&
+        this.form.login &&
+        (this.form.password && this.form.password === this.form.passwordC)
+      ) {
+        const response = await this.$http.post('v1/produtores', this.form); // request with async await
 
-  //       if (response.success) {
-  //         this.$toasted.show('Registrarion completed with success', { icon: 'check', type: 'success' });
-  //       } else {
-  //         this.$toasted.show(response.err, { icon: 'times', type: 'error' });
-  //       }
-  //     } else {
-  //       this.$toasted.show('Inform  email, role, client, login and password. Password and passord confirm must be equals', { icon: 'times', type: 'error' });
-  //     }
-  //   },
-  // },
-  // async mounted() {
-  //   if (this.id) {
-  //     const response = await this.$http.get(`/v1/produtores/${this.id}`);
-  //     if (response._id) {
-  //       delete response.password;
-  //       this.form = response;
-  //     } else {
-  //       this.$toasted.show('An error has ocurred', { icon: 'times', type: 'error' });
-  //     }
-  //   }
-  //   this.getClients();
-  // },
+        if (response.success) {
+          this.$toasted.show('Registrarion completed with success', { icon: 'check', type: 'success' });
+        } else {
+          this.$toasted.show(response.err, { icon: 'times', type: 'error' });
+        }
+      } else {
+        this.$toasted.show('Inform  email, role, client, login and password. Password and passord confirm must be equals', { icon: 'times', type: 'error' });
+      }
+    },
+  },
+  async mounted() {
+    if (this.id) {
+      const response = await this.$http.get(`/v1/produtores/${this.id}`);
+      if (response._id) {
+        delete response.password;
+        this.form = response;
+      } else {
+        this.$toasted.show('An error has ocurred', { icon: 'times', type: 'error' });
+      }
+    }
+  },
   components: {
     vueDropzone: vue2Dropzone,
   },

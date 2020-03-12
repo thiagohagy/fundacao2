@@ -69,24 +69,19 @@ const router = new Router({
       },
     },
     {
-      path: '/users',
-      component: {
-        render(c) { return c('router-view') } /// then I dont need a parent component file
-      },
+      path: '/users/form/:id?',
+      name: 'UsersForm',
+      component: UsersForm,
+      props: true,
       meta: {
-        humanName: 'Users',
+        humanName: 'Login',
+        pathAlias: 'Users / Login',
       },
-      children: [
-        {
-          path: 'form/:id?',
-          name: 'UsersForm',
-        },
-      ],
     },
     {
       path: '/fazenda',
       component: {
-        render(c) { return c('router-view') } /// then I dont need a parent component file
+        render(c) { return c('router-view') } 
       },
       meta: {
         humanName: 'Fazendas',
