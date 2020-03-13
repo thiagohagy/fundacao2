@@ -125,12 +125,13 @@ export default {
       formData.append('folder', 'avatar'); // add field to upload form
     },
     async onSubmit() {
+
       if (this.form._id) {
         if (this.form.email && this.form.login) {
           const response = await this.$http.put('v1/produtores', this.form); // request with async await
 
           if (response.success) {
-            this.$toasted.show('User edited with success', { icon: 'check', type: 'success' });
+            this.$toasted.show('Dados editados com sucesso, faça o login e logou para atualizar sua foto', { icon: 'check', type: 'success' });
           } else {
             this.$toasted.show(response.err, { icon: 'times', type: 'error' });
           }

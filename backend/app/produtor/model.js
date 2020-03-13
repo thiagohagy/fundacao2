@@ -12,6 +12,11 @@ const Schema = mongoose.Schema({
   name: String,
   email: String,
   active: { type: Boolean, default: true },
+  avatar: {
+    filename: String,
+    mimetype: String,
+    folder: String,
+  }
 });
 
 Schema.pre('save', function(next) {

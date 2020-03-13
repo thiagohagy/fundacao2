@@ -6,7 +6,7 @@
 
       <hr>
     </div>
-    
+
     <div class="col-sm">
       <h4>Estoque <font-awesome-icon icon="box" /></h4>
       <p><small>Produtos disponíveis para aplicação</small></p>
@@ -14,14 +14,14 @@
       <div class="col-12 mb-4">
         <button class="col-4 btn btn-md btn-success mr-4" @click="novaCompra()" >Nova Compra</button>
       </div>
-      
+
 
       <div v-if="estoque.length==0" class="alert alert-warning">
         Nenhum registro encontrado
       </div>
 
       <table class="table table-bordered table-striped" v-if="estoque.length > 0">
-        <thead class="table-dark">
+        <thead class="table-dark table-sm">
           <tr>
             <th>Produto</th>
             <th>Quantidade</th>
@@ -39,6 +39,11 @@
 
         </tbody>
       </table>
+
+       <my-pagination
+        :total='totalEstoque'
+        @pageChanged='fetchEstoque($event.skip,$event.limit)'
+      ></my-pagination>
     </div>
 
     <div class="col-sm">
@@ -53,9 +58,8 @@
         Nenhum registro encontrado
       </div>
 
-
       <table class="table table-bordered table-striped" v-if="fazendas.length > 0">
-        <thead class="table-dark">
+        <thead class="table-dark table-sm">
           <tr>
             <th>Fazenda</th>
             <th>Área</th>
@@ -76,20 +80,27 @@
           </tr>
         </tbody>
       </table>
+
+      <my-pagination
+        :total='totalFazendas'
+        @pageChanged='fetchFazenda($event.skip,$event.limit)'
+      ></my-pagination>
+
     </div>
+
 
     <div class="col-12 mb-5">
       <hr>
 
       <h4>Dívidas <font-awesome-icon icon="money-bill-wave" /></h4>
-      
+
       <p><small>Extrato das divídas das aplicações</small></p>
       <div v-if="movimentacoes.length==0" class="alert alert-warning">
         Nenhum registro encontrado
       </div>
 
       <table class="table table-bordered table-striped" v-if="movimentacoes.length > 0">
-        <thead class="table-dark">
+        <thead class="table-dark table-sm">
           <tr>
             <th>Nr nota</th>
             <th>Produto</th>
@@ -100,9 +111,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr 
-            v-for="(mov, key) in movimentacoes" 
-            :key="key" 
+          <tr
+            v-for="(mov, key) in movimentacoes"
+            :key="key"
             :class="{
               paid: mov.valorPago == mov.valorTotal,
               delayed: checkDelay(mov)
@@ -123,30 +134,35 @@
 
         </tbody>
       </table>
+
+      <my-pagination
+        :total='totalMovimentacoes'
+        @pageChanged='fetchCaixa($event.skip,$event.limit)'
+      ></my-pagination>
+
     </div>
   </div>
 
 </template>
 
 <script>
+import moment from 'moment';
 import CompraModal from './Compra.vue';
 import AplicacaoModal from './Aplicacao.vue';
 import PagamentoModal from './Pagamento.vue';
 import DetalheFazendaVue from './fazendas/DetalheFazenda.vue';
-import moment from 'moment';
 
 export default {
-  name: 'home',
-  components: {
-    // HelloWorld,
-  },
   data() {
     return {
       movimentacoes: [],
+      totalMovimentacoes: 0,
       fazendas: [],
+      totalFazendas: 0,
       estoque: [],
+      totalEstoque: 0,
       saldo: 0,
-    }
+    };
   },
   methods: {
     checkDelay(mov) {
@@ -203,17 +219,49 @@ export default {
         }
       )
     },
-    async fetchData() {
-      const response = await this.$http.post('v1/operacoes/');
+    async fetchCaixa(skip, limit) {
+      const sendData = {};
+      sendData.limit = limit || 5;
+      sendData.skip = skip || 0;
 
-      this.movimentacoes = response.fluxos;
-      this.fazendas = response.fazendas;
-      this.estoque = response.estoques;
+      const response = await this.$http.post('v1/operacoes/fetchCaixa', sendData);
+
+      this.movimentacoes = response.data;
+      this.totalMovimentacoes = response.total;
+
+    },
+    async fetchFazenda(skip, limit) {
+      const sendData = {};
+      sendData.limit = limit || 5;
+      sendData.skip = skip || 0;
+
+      const response = await this.$http.post('v1/operacoes/fetchFazenda', sendData);
+
+      this.fazendas = response.data;
+      this.totalFazendas = response.total;
+
+    },
+    async fetchEstoque(skip, limit) {
+      const sendData = {};
+      sendData.limit = limit || 5;
+      sendData.skip = skip || 0;
+
+      const response = await this.$http.post('v1/operacoes/fetchEstoque', sendData);
+
+      this.estoque = response.data;
+      this.totalEstoque = response.total;
+    },
+    async fetchSaldo() {
+      const response = await this.$http.post('v1/operacoes/fetchSaldo');
       this.saldo = response.saldo;
-}
+    },
   },
   mounted() {
-    this.fetchData();
+    this.fetchCaixa();
+    this.fetchFazenda();
+    this.fetchEstoque();
+    this.fetchSaldo();
+
   },
 };
 </script>
@@ -231,7 +279,7 @@ export default {
     padding: 10px;
     text-transform: uppercase;
   }
-  
+
   .delayed {
     background-color: lightcoral !important;
     color: white;

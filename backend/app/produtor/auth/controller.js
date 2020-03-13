@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt-nodejs');
 const config = require('../../../config');
-const Usuario = require('../model');
+const Produtor = require('../model');
 
-/*Usuario Routes*/
 exports.login = async (req, res) => {
-  const user = await Usuario.findOne({ login: req.body.login });
+  const user = await Produtor.findOne({ login: req.body.login });
 
   if (!user) {
     res.json({
@@ -24,6 +23,8 @@ exports.login = async (req, res) => {
         beAToken.name = user.name;
         beAToken.role = user.role;
         beAToken.avatar = user.avatar;
+
+        console.log(user);
 
         console.log(beAToken);
 

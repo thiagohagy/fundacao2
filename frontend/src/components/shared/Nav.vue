@@ -50,8 +50,8 @@
         </b-navbar-nav>
 
         <b-navbar-nav class="ml-auto ">
-          <b-nav-item id="profileDropdown">
-            <b-nav-item-dropdown class="nav-item" :text="decoded.name || decoded.login" right>
+          <b-nav-item id="profileDropdown" class="mt-2">
+              <b-nav-item-dropdown class="nav-item" :text="decoded.name || decoded.login" right> 
               <b-dropdown-item href="#">
                 <router-link :to="{ name: 'UsersForm', params:{ id: decoded._id } }" class="nav-link dropdown-nav-link">Meus dados</router-link>
               </b-dropdown-item>
@@ -63,6 +63,10 @@
                 </div>
               </b-dropdown-item>
             </b-nav-item-dropdown>
+          </b-nav-item>
+          
+          <b-nav-item id="profileDropdown">
+            <img rounded="circle" width="55" height="55" class="m-1 nomargin rounded-circle img" :src='getFile()' >
           </b-nav-item>
         </b-navbar-nav>
 
@@ -94,6 +98,19 @@ export default {
     logout() {
       this.$store.commit('user_logout');
     },
+    getFile() {
+      if (this.decoded && this.decoded.avatar) {
+        let file = `${this.api}/api/v1/upload?`;
+        file += `token=${this.token}`;
+        file += `&mimetype=${this.decoded.avatar.mimetype}`;
+        file += `&filename=${this.decoded.avatar.filename}`;
+        file += `&folder=${this.decoded.avatar.folder}`;
+
+        return file;
+      }
+
+      return './../../assets/userPlaceholder.png';
+    }
   },
   computed: {
     isLogged() {

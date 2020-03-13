@@ -7,16 +7,49 @@ const Fazenda = require('./../fazenda/model');
 const moment = require('moment');
 
 
-exports.index = async (req, res) => {
+exports.fetchCaixa = async (req, res) => {
+  const form = req.body;
 
-  const fluxos = await FluxoCaixa.find({ produtor: req.decoded._id }).populate('nota estoque').sort({valorPago: 1});
-  const estoques = await Estoque.find({ produtor: req.decoded._id, qtd: {$gt: 0}}).populate('nota');
-  const fazendas = await Fazenda.find({ produtor: req.decoded._id });
+  console.log(form)
+  const query = FluxoCaixa.find({ produtor: req.decoded._id });
+  query.skip(form.skip)
+  query.limit(form.limit);
+  query.populate('nota estoque');
+  query.sort({valorPago: 1});
+  const data = await query.exec()
+  const total = await FluxoCaixa.count({ produtor: req.decoded._id });
+
+  res.json({data, total});
+}
+
+exports.fetchFazenda = async (req, res) => {
+  const form = req.body;
+  console.log(form)
+  const query = Fazenda.find({ produtor: req.decoded._id });
+  query.skip(form.skip)
+  query.limit(form.limit);
+  const data = await query.exec()
+  const total = await Fazenda.count({ produtor: req.decoded._id });
+
+  res.json({data, total});
+
+}
+exports.fetchEstoque = async (req, res) => {
+  const form = req.body;
+  const query = Estoque.find({ produtor: req.decoded._id, qtd: {$gt: 0}});
+  query.skip(form.skip)
+  query.limit(form.limit);
+  query.populate('nota');
+  const data = await query.exec()
+  const total = await Estoque.count({ produtor: req.decoded._id });
+
+  res.json({data, total});
+}
+
+exports.fetchSaldo = async (req, res) => {
   const produtor = await Produtor.findOne({ _id: req.decoded._id});
-
-  res.json({ fluxos, estoques, fazendas , saldo: produtor.saldo });
-};
-
+  res.json({saldo: produtor.saldo});
+}
 
 exports.getDadosAplicacao = async (req, res) => {
   

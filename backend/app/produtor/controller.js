@@ -3,7 +3,6 @@ const Model = require('./model');
 const bcrypt = require('bcrypt-nodejs');
 const to = require('../../core/to');
 
-/* Routes*/
 exports.index = async (req, res) => {
 
   const filtro = {};
@@ -63,12 +62,10 @@ exports.edit = async (req, res) => {
     model.password = req.body.password;
   }
 
-  model.login = req.body.client;
   model.login = req.body.login;
   model.nome = req.body.nome;
   model.email = req.body.email;
   model.name = req.body.name;
-  model.role = req.body.role;
   model.lastUpdateBy = req.decoded._id;
   model.avatar = req.body.avatar;
 

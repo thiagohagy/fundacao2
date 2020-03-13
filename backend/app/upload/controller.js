@@ -13,7 +13,7 @@ exports.upload = (req, res) => {
     if (!fs.existsSync(destFolder)) fs.mkdirSync(destFolder);
 
     // move file to folder
-    fs.rename(req.file.path, `${destFolder}/${req.file.filename}`);
+    fs.renameSync(req.file.path, `${destFolder}/${req.file.filename}`);
   }
 
   res.json({
