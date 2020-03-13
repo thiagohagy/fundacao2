@@ -29,7 +29,7 @@
       </div>
 
       <div class="text-center">
-        <b-button type="button" variant="primary" @click="onSubmit" >Confirmar</b-button>
+        <b-button type="button" variant="primary" @click="onSubmit" class="mr-2" >Confirmar</b-button>
         <router-link to="/fazenda">
           <b-button type="reset" variant="danger"  >
             Cancelar
@@ -44,61 +44,58 @@
 <script>
 
 
-  export default {
-    data() {
-      return {
-        form:{
-          name: 'teste',
-          talhoes: [{}],
-        },
-        pageTitle: 'Cadastro de fazenda',
-      }
-    },
-    methods: {
-      async onSubmit(){
-        if (this.form._id) {
-           if ( this.form.name) {
-            let response = await this.$http.put('v1/fazendas', this.form); // request with async await
-
-            if (response.success) {
-              this.$toasted.show('Fazenda editada com sucesso',{icon:'check', type: 'success'});
-              this.$router.push({name: "Fazendas"});
-            } else {
-              this.$toasted.show(response.err ,{icon:'times', type: 'error'});
-            }
-          } else {
-            this.$toasted.show('Informe o nome e os talhões',{icon:'times', type: 'error'})
-          }
-        } else {
-
-          if ( this.form.name ) {
-            let response = await this.$http.post('v1/fazendas', this.form); // request with async await
-
-            if (response.success) {
-              this.$toasted.show('Cadastro cuncluido',{icon:'check', type: 'success'});
-              this.$router.push({name: "Fazendas"});
-            } else {
-              this.$toasted.show(response.err ,{icon:'times', type: 'error'});
-            }
-          } else {
-            this.$toasted.show('Informe o nome da fazenda',{icon:'times', type: 'error'})
-          }
-        }
+export default {
+  data() {
+    return {
+      form: {
+        name: 'teste',
+        talhoes: [{ nome: 't1' }],
       },
-    },
-    async mounted() {
-      if (this.id) {
-        this.pageTitle =  'Edição de fazenda';
-        let response = await this.$http.get(`/v1/fazendas/${this.id}`);
-        if (response._id) {
-          delete response.password;
-          this.form = this.form = response;
+      pageTitle: 'Cadastro de fazenda',
+    }
+  },
+  methods: {
+    async onSubmit() {
+      if (this.form._id) {
+        if (this.form.name) {
+          const response = await this.$http.put('v1/fazendas', this.form); // request with async await
+
+          if (response.success) {
+            this.$toasted.show('Fazenda editada com sucesso',{ icon: 'check', type: 'success' });
+            this.$router.push({name: 'Fazendas' });
+          } else {
+            this.$toasted.show(response.err ,{ icon: 'times', type: 'error' });
+          }
         } else {
-          this.$toasted.show('An error has ocurred' ,{icon:'times', type: 'error'});
+          this.$toasted.show('Informe o nome e os talhões', { icon: 'times', type: 'error' });
         }
+      } else if ( this.form.name ) {
+        const response = await this.$http.post('v1/fazendas', this.form); // request with async await
+
+        if (response.success) {
+          this.$toasted.show('Cadastro cuncluido', { icon: 'check', type: 'success' });
+          this.$router.push({ name: 'Fazendas' });
+        } else {
+          this.$toasted.show(response.err, { icon: 'times', type: 'error' });
+        }
+      } else {
+        this.$toasted.show('Informe o nome da fazenda', { icon: 'times', type: 'error' });
       }
-    },
-  }
+    }
+  },
+  async mounted() {
+    if (this.id) {
+      this.pageTitle =  'Edição de fazenda';
+      let response = await this.$http.get(`/v1/fazendas/${this.id}`);
+      if (response._id) {
+        delete response.password;
+        this.form = this.form = response;
+      } else {
+        this.$toasted.show('An error has ocurred' , { icon: 'times', type: 'error' });
+      }
+    }
+  },
+}
 </script>
 
 

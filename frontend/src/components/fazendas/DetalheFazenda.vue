@@ -53,7 +53,9 @@ export default {
   methods: {
     async fetchDetalhes() {
       const response = await this.$http.get(`v1/fazendas/${this.id}`);
+
       this.form = response;
+
     },
   },
 }

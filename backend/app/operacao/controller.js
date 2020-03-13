@@ -9,7 +9,7 @@ const moment = require('moment');
 
 exports.index = async (req, res) => {
 
-  const fluxos = await FluxoCaixa.find({ produtor: req.decoded._id }).populate('nota estoque').sort({vencimento:1, valorPago: 1});
+  const fluxos = await FluxoCaixa.find({ produtor: req.decoded._id }).populate('nota estoque').sort({valorPago: 1});
   const estoques = await Estoque.find({ produtor: req.decoded._id, qtd: {$gt: 0}});
   const fazendas = await Fazenda.find({ produtor: req.decoded._id });
   const produtor = await Produtor.findOne({ _id: req.decoded._id});

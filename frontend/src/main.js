@@ -10,65 +10,40 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import BootstrapVue from 'bootstrap-vue'
 import VueBootstrapTypeahead from 'vue-bootstrap-typeahead'
 
-import router from './core/router';
-import store from './store/index';
-import http from './core/http';
-
+import './core/globalMixin';
+import './core/filter';
+import './assets/fontAwesome/faall.css';
+import './assets/fontAwesome/fasolid.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import 'material-design-icons/iconfont/material-icons.css';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import './assets/fontAwesome/faall.css';
-import './assets/fontAwesome/fasolid.css';
 import './assets/bootstrap.custom.min.css';
 import './assets/custom.css';
 
-import './core/globalMixin';
-import './core/filter';
-
-
-
-library.add(fas);
+import router from './core/router';
+import store from './store/index';
+import http from './core/http';
+import money from 'v-money';
+import VModal from 'vue-js-modal';
+import VueTheMask from 'vue-the-mask';
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead)
 
-import VModal from 'vue-js-modal'
-
-Vue.use(VModal, { dynamic: true , injectModalsContainer: true });
-
-Vue.use(BootstrapVue);
-
+library.add(fas);
 Vue.prototype.$http = http;
-
 Vue.config.productionTip = false;
 
-Vue.use(Toasted, {
-  iconPack: 'fontawesome', // set your iconPack, defaults to material. material|fontawesome
-  position: 'top-right',
-  duration: 5000,
-  // theme: 'primary',
-  // theme: 'bubble',
-  theme: 'outline',
-  icon: {
-    name: 'done',
-    after: true, // this will append the icon to the end of content
-  },
-});
+Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
+Vue.use(BootstrapVue);
+Vue.use(VueTheMask);
 
-import VueTheMask from 'vue-the-mask'
-Vue.use(VueTheMask)
+const toastOpts = { iconPack: 'fontawesome', position: 'top-right', duration: 5000, theme: 'outline', icon: { name: 'done', after: true }};
+Vue.use(Toasted, toastOpts);
 
-import money from 'v-money';
-
-Vue.use(money, {
-  decimal: ',',
-  thousands: '.',
-  prefix: 'R$ ',
-  suffix: ' #',
-  precision: 2,
-  masked: false,
-})
+const moneyOpts = { decimal: ',', thousands: '.', prefix: 'R$ ', suffix: ' #', precision: 2, masked: false };
+Vue.use(money, moneyOpts);
 
 Vue.use(VueProgressBar, {
   color: 'blue',
