@@ -32,7 +32,7 @@
         <tbody>
           <tr v-for="(item,key ) in estoque" :key="key">
             <td>{{ item.produto}}</td>
-            <td>{{ item.qtd }}</td>
+            <td>{{ item.qtd }} {{item.nota.unidade}}</td>
             <td>{{ item.vlrUnitario | money }}</td>
             <td>{{ item.vlrUnitario * item.qtd | money }}</td>
           </tr>
@@ -80,14 +80,13 @@
 
     <div class="col-12 mb-5">
       <hr>
-      
+
       <h4>Dívidas <font-awesome-icon icon="money-bill-wave" /></h4>
       
       <p><small>Extrato das divídas das aplicações</small></p>
       <div v-if="movimentacoes.length==0" class="alert alert-warning">
         Nenhum registro encontrado
       </div>
-
 
       <table class="table table-bordered table-striped" v-if="movimentacoes.length > 0">
         <thead class="table-dark">

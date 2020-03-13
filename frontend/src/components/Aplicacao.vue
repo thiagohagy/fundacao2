@@ -117,6 +117,7 @@ export default {
           produtosSelecionados,
           talhaoSelecionado: this.form.talhaoSelecionado,
           porcentagemAplicacao: this.form.porcentagemAplicacao,
+          fazendaSelecionada: this.form.fazendaSelecionada,
         };
           
         const response = await this.$http.post('v1/operacoes/aplicacao', dataSend);

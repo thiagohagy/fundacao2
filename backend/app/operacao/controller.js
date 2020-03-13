@@ -10,7 +10,7 @@ const moment = require('moment');
 exports.index = async (req, res) => {
 
   const fluxos = await FluxoCaixa.find({ produtor: req.decoded._id }).populate('nota estoque').sort({valorPago: 1});
-  const estoques = await Estoque.find({ produtor: req.decoded._id, qtd: {$gt: 0}});
+  const estoques = await Estoque.find({ produtor: req.decoded._id, qtd: {$gt: 0}}).populate('nota');
   const fazendas = await Fazenda.find({ produtor: req.decoded._id });
   const produtor = await Produtor.findOne({ _id: req.decoded._id});
 
@@ -36,6 +36,7 @@ exports.aplicacao = async (req, res) => {
   const form  = req.body;
 
   const porcAplicacao = form.porcentagemAplicacao / form.talhaoSelecionado.length;
+  const fazenda = await Fazenda.findOne({_id: form.fazendaSelecionada._id});
 
   // pegar produtos do estoque
   for (let i = 0; i < form.produtosSelecionados.length; i++) {
@@ -45,26 +46,20 @@ exports.aplicacao = async (req, res) => {
     const totalProdutoAplicar = porcAplicacao * produto.qtd / 100;
     const valorTotalAplicar = produto.vlrUnitario * totalProdutoAplicar;
 
-    console.log(`${produto.nome} - ${totalProdutoAplicar} * ${produto.vlrUnitario}  = ${valorTotalAplicar} `)
-
     // aplicar custo nos talhões selecionados
-
     for (let iTalhao = 0; iTalhao < form.talhaoSelecionado.length; iTalhao++) {
       const talhao = form.talhaoSelecionado[iTalhao];
-
-      const fazenda = await Fazenda.findOne({'talhoes._id': talhao._id});
 
       for (let itf = 0; itf < fazenda.talhoes.length; itf++) {
         const talhaoFazenda = fazenda.talhoes[itf];
 
         if (talhao._id == talhaoFazenda._id) {
           talhaoFazenda.custo = talhaoFazenda.custo > 0 && !isNaN(talhaoFazenda.custo) ? valorTotalAplicar : valorTotalAplicar;
-
           await fazenda.save();
+
+          // descontar do estoque o produto aplicado
           await Estoque.update({_id: produto._id }, { $inc: { qtd: totalProdutoAplicar * -1 }});
           
-          // descontar do estoque o produto aplicado
-          console.log('aplicou valor no talhao')
         }         
       }
     }
@@ -73,65 +68,6 @@ exports.aplicacao = async (req, res) => {
   res.json({success: true});
 };
 
-
-exports.compra = async (req, res) => {
-
-  // lançar produtos
-  const form  = req.body;
-
-  const errors = [];
-  
-  for (let i = 0; i < form.notas.length; i++) {
-    const nota = form.notas[i];
-    
-    // salvar dados da nota
-    const novaNota = new Nota(nota);
-    notaSaved = await novaNota.save();
-
-    if (notaSaved) {
-      // salvar dados do estoque
-      const estoque  = new Estoque();
-      estoque.produtor = req.decoded._id;
-      estoque.data = moment().toISOString();
-      estoque.qtd =  nota.quantidade,
-      estoque.produto = nota.descricao,
-      estoque.vlrUnitario = nota.valorUnitario;
-      estoque.nota = notaSaved._id;
-      let estoqueSaved = await estoque.save();
-
-      // dividir pagamentos
-      const valorTotal = nota.quantidade * nota.valorUnitario;
-      const parcelas = form.tipoVencimeto;
-
-      const valorParcela = valorTotal/parcelas;
-
-      iParcela = 0;
-      while( iParcela < parcelas) {
-        // salvar dados da operação de caixa conforme vencimento e valor da parcela
-        const caixaOp = new FluxoCaixa();
-        caixaOp.produtor = req.decoded._id;
-        caixaOp.valorTotal = valorParcela;
-        caixaOp.valorRestante = valorParcela;
-        caixaOp.nota = notaSaved._id;
-        caixaOp.estoque = estoqueSaved._id;
-        caixaOp.vencimento = moment().add((iParcela+1) * 30, 'days');
-
-        console.log(caixaOp)
-        let op = await caixaOp.save();
-        iParcela += 1;
-      }
-
-    } else {
-      errors.push(nota);
-    }
-  }
-
-  if (errors.length == 0) {
-    res.json({ success: true});
-  } else {
-    res.json({ succsess: false, data, err: 'OPS!!! Some error has ocurred', form: req.body });
-  }
-};
 
 
 exports.pagamento = async (req, res) => {
@@ -168,3 +104,86 @@ exports.pagamento = async (req, res) => {
     res.json({ succsess: false, err: 'Saldo insuficiente para pagamento da dívida', form: req.body });
   }
 };
+
+
+exports.compra = async (req, res) => {
+
+  // lançar produtos
+  const form  = req.body;
+  const errors = [];
+  
+  for (let i = 0; i < form.notas.length; i++) {
+    const nota = form.notas[i];
+    
+    // salvar dados da nota
+    const novaNota = new Nota(nota);
+    notaSaved = await novaNota.save();
+
+    if (notaSaved) {
+      // salvar dados do estoque
+      let errEstoque = false;
+      const estoqueSaved = await aplicaEstoque(req.decoded, notaSaved).catch(e => errEstoque = e);
+
+      if (!errEstoque) {
+
+        // dividir pagamentos
+        const valorTotal = nota.quantidade * nota.valorUnitario;
+        const parcelas = form.tipoVencimeto;  
+        const valorParcela = valorTotal/parcelas;
+  
+        iParcela = 0;
+        while( iParcela < parcelas) {
+          // salvar dados da operação de caixa conforme vencimento e valor da parcela
+          await lancaFluxoCaixa(req.decoded, valorParcela, iParcela, notaSaved, estoqueSaved);          
+          iParcela += 1;
+        } 
+
+      } else {
+        errors.push(errEstoque);    
+      }
+    } else {
+      errors.push(nota);
+    }
+  }
+
+  if (errors.length == 0) {
+    res.json({ success: true});
+  } else {
+    res.json({ succsess: false, data, err: 'OPS!!! Some error has ocurred', form: req.body });
+  }
+};
+
+function lancaFluxoCaixa(decoded, valorParcela, iParcela, notaSaved, estoqueSaved) {
+  return new Promise(async (resolve, reject)=> {
+    const caixaOp = new FluxoCaixa();
+    caixaOp.produtor = decoded._id;
+    caixaOp.valorTotal = valorParcela;
+    caixaOp.valorRestante = valorParcela;
+    caixaOp.nota = notaSaved._id;
+    caixaOp.estoque = estoqueSaved._id;
+    caixaOp.vencimento = moment().add((iParcela+1) * 30, 'days');
+    let op = await caixaOp.save();
+
+    resolve(true);
+  });
+}
+
+function aplicaEstoque(decoded, nota) {
+  return new Promise(async (resolve, reject)=> {
+    const estoque  = new Estoque();
+    estoque.produtor = decoded._id;
+    estoque.data = moment().toISOString();
+    estoque.qtd =  nota.quantidade,
+    estoque.produto = nota.descricao,
+    estoque.vlrUnitario = nota.valorUnitario;
+    estoque.nota = notaSaved._id;
+    let estoqueSaved = await estoque.save();
+
+    if (estoqueSaved) {
+      resolve(estoqueSaved);
+    } else {
+      reject({err: 'Erro ao atualizar estoque'});
+    }
+  });
+}
+
