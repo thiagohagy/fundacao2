@@ -40,7 +40,9 @@ npm run serve
 
 {project folder}/backend/app/produtor/
 
-## OBS: tem um backup do banco na pasta root do projeto e um arquivo de exemplo para importação na hora das compras (notas.csv)
+## OBS:
+
+Tem um backup do banco na pasta root do projeto e um arquivo de exemplo para importação na hora das compras (notas.csv)
 
 
 ## then run 
