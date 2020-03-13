@@ -3,7 +3,6 @@
 
     <div class="col-12 text-center m-4">
       <h3>Saldo disponível: {{saldo | money}}</h3>
-
       <hr>
     </div>
 
@@ -36,7 +35,6 @@
             <td>{{ item.vlrUnitario | money }}</td>
             <td>{{ item.vlrUnitario * item.qtd | money }}</td>
           </tr>
-
         </tbody>
       </table>
 
@@ -175,6 +173,7 @@ export default {
         width: '95%',
         height: 'auto',
         clickToClose: false,
+        scrollable: true,
       }, {
         'closed': () => { app.fetchData() }
       })
@@ -186,6 +185,7 @@ export default {
         width: '60%',
         height: 'auto',
         clickToClose: false,
+        scrollable: true,
       }, {
         'closed': () => { app.fetchData() }
       })
@@ -199,6 +199,7 @@ export default {
           width: '60%',
           height: 'auto',
           clickToClose: false,
+          scrollable: true,
         }, {
           'closed': () => { app.fetchData() }
         }
@@ -255,13 +256,15 @@ export default {
       const response = await this.$http.post('v1/operacoes/fetchSaldo');
       this.saldo = response.saldo;
     },
+    fetchData() {
+      this.fetchCaixa();
+      this.fetchFazenda();
+      this.fetchEstoque();
+      this.fetchSaldo();
+    }
   },
   mounted() {
-    this.fetchCaixa();
-    this.fetchFazenda();
-    this.fetchEstoque();
-    this.fetchSaldo();
-
+    this.fetchData();
   },
 };
 </script>

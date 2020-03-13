@@ -1,16 +1,37 @@
-/* Model*/
+const config = require('./../../config');
 const FluxoCaixa = require('./FluxoCaixa');
 const Nota = require('./Nota');
 const Estoque = require('./Estoque');
 const Produtor = require('./../produtor/model');
 const Fazenda = require('./../fazenda/model');
 const moment = require('moment');
+const fs = require('fs');
+const readline = require('readline');
+const iconvlite = require('iconv-lite');
 
+exports.extractNotas = async (req, res) => {
+  const fileData = req.body;
+
+  const fileStream = fs.createReadStream(`${config.uploadPath}/${fileData.destinationFolder}/${fileData.filename}`).pipe(iconvlite.decodeStream('windows-1252'));
+
+  const rl = readline.createInterface({
+    input: fileStream,
+    crlfDelay: Infinity
+  });
+
+  const linhasResponse = [];
+
+  for await (const line of rl) {
+    linhasResponse.push(line.split(';'));
+  }
+
+  linhasResponse.shift();
+
+  res.json({notas: linhasResponse});
+}
 
 exports.fetchCaixa = async (req, res) => {
   const form = req.body;
-
-  console.log(form)
   const query = FluxoCaixa.find({ produtor: req.decoded._id });
   query.skip(form.skip)
   query.limit(form.limit);
@@ -24,7 +45,6 @@ exports.fetchCaixa = async (req, res) => {
 
 exports.fetchFazenda = async (req, res) => {
   const form = req.body;
-  console.log(form)
   const query = Fazenda.find({ produtor: req.decoded._id });
   query.skip(form.skip)
   query.limit(form.limit);
@@ -149,7 +169,14 @@ exports.compra = async (req, res) => {
     const nota = form.notas[i];
     
     // salvar dados da nota
+    let raw = nota.dataCompra.split('/');
+    nota.dataCompra = moment(`${raw[2]}-${raw[1]}-${raw[0]}`);
+
+    raw = nota.dataVencimento.split('/');
+    nota.dataVencimento = moment(`${raw[2]}-${raw[1]}-${raw[0]}`);
     const novaNota = new Nota(nota);
+
+
     notaSaved = await novaNota.save();
 
     if (notaSaved) {
