@@ -1,4 +1,3 @@
-VueBase is a Boilerplate for vuejs, a quick way to create administrative systems with login and password already built with jwt
 
 # Technologies
 
@@ -14,7 +13,7 @@ VueBase is a Boilerplate for vuejs, a quick way to create administrative systems
 
 * Generic components on frontend: Nav, Pagination, CrudHeader and AlertMessage
 * Global Mixin
-* Complete user and client CRUD (User with upload, we are using Multer on backend )
+* Complete user and client CRUD (User with upload, I'm using Multer on backend )
 * Authentication using Vuex
 * Http with axios
 * VueRouter for route manage
@@ -41,6 +40,9 @@ npm run serve
 
 {project folder}/backend/app/produtor/
 
+## OBS: tem um backup do banco na pasta root do projeto e um arquivo de exemplo para importação na hora das compras (notas.csv)
+
+
 ## then run 
 
 node createRoot.js
@@ -50,5 +52,6 @@ node createRoot.js
 ## Access
 
 http://localhost:8080
+
 
 And thats all folks!
